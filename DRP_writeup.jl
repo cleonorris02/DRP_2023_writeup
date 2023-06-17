@@ -41,6 +41,11 @@ md"""
 This semester, we explored computational thinking. We began by completing Module 1 of MIT's _Introduction to Computational Thinking_ course, where we learned the programming language Julia by practicing concepts such as image processing, dynamic programming, and automatic differentiation. Then we moved on to exploring neural networks and their applications in artificial intelligence.
 """
 
+# ╔═╡ 3d9dd25a-9de8-47e3-be03-3657b53901e3
+md"""
+Note: if you are interested in running this Pluto notebook with Julia, please click [here](https://computationalthinking.mit.edu/Fall22/installation/) for installation details.
+"""
+
 # ╔═╡ 0cf8abd3-1d2f-4222-a42d-b457a7712d8f
 TableOfContents()
 
@@ -1490,6 +1495,7 @@ version = "17.4.0+0"
 # ╔═╡ Cell order:
 # ╟─f3ea168e-0183-4b95-bc1f-2c0699dee257
 # ╟─b56f19b0-dfe2-11ed-0eb6-9dab1db5e064
+# ╟─3d9dd25a-9de8-47e3-be03-3657b53901e3
 # ╠═d545d006-239c-4de5-adc9-01fac4d8655c
 # ╠═0cf8abd3-1d2f-4222-a42d-b457a7712d8f
 # ╠═45e5da8b-384b-413a-b1c3-4ad7970ba6f2
