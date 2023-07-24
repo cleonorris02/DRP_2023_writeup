@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.22
+# v0.19.27
 
 using Markdown
 using InteractiveUtils
@@ -38,12 +38,14 @@ Title(
 # ╔═╡ b56f19b0-dfe2-11ed-0eb6-9dab1db5e064
 md"""
 ## Introduction
-This semester, we explored computational thinking. We began by completing Module 1 of MIT's _Introduction to Computational Thinking_ course, where we learned the programming language Julia by practicing concepts such as image processing, dynamic programming, and automatic differentiation. Then we moved on to exploring neural networks and their applications in artificial intelligence.
+This semester, we explored computational thinking. We began by completing Module 1 of MIT's [_Introduction to Computational Thinking_ course](https://computationalthinking.mit.edu/Fall22/), where we learned the programming language Julia by practicing concepts such as image processing, dynamic programming, and automatic differentiation. Then we moved on to exploring neural networks and their applications in artificial intelligence.
 """
 
 # ╔═╡ 3d9dd25a-9de8-47e3-be03-3657b53901e3
 md"""
-Note: if you are interested in running this Pluto notebook with Julia, please click [here](https://computationalthinking.mit.edu/Fall22/installation/) for installation details.
+**Note:** This Pluto notebook is written using Julia, which is a scientific computing language developed by Jeff Bezanson, Stefan Karpinski, Alan Edelman, and Viral B. Shah in 2012. It is designed for high performance and efficient computations, and is one of the fastest languages while still being dynamically typed.
+
+If you are interested in running this Pluto notebook with Julia, please click [here](https://computationalthinking.mit.edu/Fall22/installation/) for Julia and Pluto installation details. Additionally, see [this](https://github.com/cleonorris02/DRP_2023_writeup) GitHub repository for the code and this notebook.
 """
 
 # ╔═╡ 0cf8abd3-1d2f-4222-a42d-b457a7712d8f
@@ -55,14 +57,14 @@ apply_css_fixes()
 # ╔═╡ 93e30d91-32fb-4e6c-bf36-d332e8dcca77
 md"""
 ## Exploring Generative Language
-One of the most interesting things from our initial Julia explorations included learning about language generation. We started by examining the concept of letter frequencies and "n-grams".
+One of the most interesting lessons from our initial Julia explorations included learning about language generation. We started by examining the concept of letter frequencies and "n-grams". Below is an example of random letters from the English alphabet, generated from an input alphabet list.
 """
 
 # ╔═╡ 180c9fce-aea1-4cba-ad52-a994006c1fdf
 md"""**Random letters from the English alphabet:**"""
 
 # ╔═╡ 0c773d80-8d64-471a-8039-e373f8f91fbd
-md"""We can use a representative sample of English text to identify the frequencies how often letters appear in the English language (our sample text is defined above in the helper functions). This will begin to look more similar to English:"""
+md"""We can use a representative sample of English text to identify the frequencies how often letters appear in the English language (our sample text is defined below in the helper functions). This will begin to look more similar to English:"""
 
 # ╔═╡ 0e624694-c530-4283-b10d-6b107d70d198
 md"""**Random letters at the correct frequencies:**"""
@@ -73,11 +75,14 @@ md"""To improve this language generation even more, we can consider the frequenc
 # ╔═╡ 0325f414-41b0-452a-9997-ab3829a8bfdf
 normalize_array(x) = x ./ sum(x)
 
+# ╔═╡ e2c6b449-c103-44b8-8cde-2833fc94a090
+md"""The transition frequency matrix displays brighter highlights for the more common letter combinations. Below is a sample of text that takes into account these transition frequencies."""
+
 # ╔═╡ 9803daa1-a491-487a-b763-125d8ea93a3b
 md"""**Random letters at the correct transition frequencies:**"""
 
 # ╔═╡ caa055f4-d810-43df-9582-8aaf0ac3abbd
-md"""Next, we learned how to use this idea to generate text. To generalize the idea of letter combinations, we instead consider word combinations. Additionally, we previously worked with the combinations of two letters (bigrams), but now we consider _n-grams_. Our first sample of the English language was relatively small compared to the training set needed to analyze the combinations of words rather than letters. Thus, we trained the model using a book written in English."""
+md"""Next, we learned how to use this idea to generate text. To generalize the idea of letter combinations, we instead consider word combinations. We previously worked with the combinations of two letters (bigrams), but now we consider _n-grams_. Our first sample of the English language was relatively small compared to the training set needed to analyze the combinations of words rather than letters. Thus, we trained the model using a book written in English."""
 
 # ╔═╡ 56c0b955-e34c-4398-a3d3-a904eb6d329c
 md"""Let's generate some _The Picture of Dorian Gray_ text:"""
@@ -94,36 +99,38 @@ dorian = let
 	raw_text[start_index:stop_index]
 end;
 
+# ╔═╡ a0d5eb75-7ad0-4325-b19c-9396eccec49f
+md"""**Note**: change the n-gram below to produce different _Dorian Gray_ text:
+"""
+
 # ╔═╡ bdc703ac-7f5f-499c-a32d-f9bf35f0be70
 md"""Using $(@bind generate_sample_n_letters NumberField(1:10))grams for characters"""
 
 # ╔═╡ 46fa4477-d819-4971-aef1-ffa77141ae8d
 md"""**A note on n-gram storage:**
 
-We were able to use a 2D array to store bigram frequencies. But with large training sets, it is impossible to store large numbers of _n-grams_. However, most of these transition frequencies are actually zero. As an example from the homework, "Dorian" is a common word in this book, but the sequence "Dorian Dorian Dorian" never occurs. A matrix of mostly zeros is called a sparse matrix, and while there is a SparseArrays.jl package in Julia, it only supports up to 2D types, so instead we use a dictionary. Specifically, we use a dictionary where each key is an _(n-1)-gram_ that maps to a vector of all the words that can complete it to an _n-gram_. This is called a completion cache. 
+We were able to use a 2D array to store bigram frequencies. But with large training sets, it is impossible to store large numbers of _n-grams_. However, most of these transition frequencies are actually zero. As an example from the *Computational Thinking* homework, "Dorian" is a common word in this book, but the sequence "Dorian Dorian Dorian" never occurs. A matrix of mostly zeros is called a sparse matrix, and while there is a SparseArrays.jl package in Julia, it only supports up to 2D types, so instead we use a dictionary for storage. Specifically, we use a dictionary where each key is an _(n-1)-gram_ that maps to a vector of all the words that can complete it to an _n-gram_. This is called a completion cache. 
 """
 
 # ╔═╡ 83bde9a2-66f8-4524-b7cf-94c168b7a778
 md"""
 ## Exploring Neural Networks
-Up until now, we have not seen the use of neural networks. So, we decided to explore the question of why we need neural networks in AI.
+Up until now, we had not seen the use of neural networks for generating text. So, we decided to explore the question of why we need neural networks in AI.
 """
 
 # ╔═╡ 98a80d98-db12-4c63-90f1-cd6c8a60ee72
 md"""**What is a neural network?**
 
-We can think of a neural network as a function: it takes in a value and outputs a value. Between the input and output layers is the "hidden" layer. One hidden layer means it is a "shallow" neural network, and more hidden layers mean it is a "deep" neural network.   
+We can think of a neural network as a function: it takes in a value and outputs a value. There are multiple layers of "neurons", or nodes, in this network. Between the input and output layers are the hidden layers. One hidden layer means it is a "shallow" neural network, and more hidden layers mean it is a "deep" neural network.   
 """
 
 # ╔═╡ bfc77886-b8d7-4e8e-96be-6f348b144a04
-imresize(download("https://images.squarespace-cdn.com/content/v1/5e49d446fdd7901a2e3437d2/2ddf4c54-06cb-4a4b-85d4-92fff40b75d5/ai-artificial-neural-network-alex-castrounis.png") |> load, ratio=1/2)
+imresize(download("https://editor.analyticsvidhya.com/uploads/30541010.png") |> load, ratio=1/2)
 
 # ╔═╡ 1abe4bba-f36f-4b2d-ae95-41304f8bdc12
-md"""The hidden layer involves adjusting parameters, called the weights and bias. Each neuron computes a weighted sum of the activations from the previous layer. Training the neural network is the process of determining what weights minimize a loss function with respect to the training examples, i.e. the weights that best capture the training examples.
+md"""The hidden layers involve adjusting parameters, called the weights and bias. Each neuron computes a weighted sum of the activations from the previous layer. Training the neural network is the process of determining the weights that best capture the training examples.
 
-
-
-"""
+One common optimization algorithm is called gradient descent. It uses what is known as a cost function, or a function that measures the error between predicted and expected values. The gradient descent algorithm gives feedback through its cost function so that the parameters of the network can be adjusted to minimize error. The iteration moves along the direction of the negative gradient of the cost function, or steepest descent, until the cost function is near zero (IBM).""" 
 
 # ╔═╡ b423fd88-e365-4ecc-9610-d1c609586aa1
 md"""**Gradient descent**"""
@@ -132,7 +139,7 @@ md"""**Gradient descent**"""
 imresize(download("https://blog.paperspace.com/content/images/size/w1050/2019/09/F1-03.large.jpg") |> load, ratio=0.4)
 
 # ╔═╡ 246c12a2-8265-4269-9ff0-efb78cea86f8
-md"""To put this in perspective, machine learning is all about finding the underlying function that fits a given dataset. This is a possibly infinite-dimensional problem, but neural networks help to make this a finite problem by finding the weights that make it close enough to the input (Rackauckas). Scientific machine learning incorporates science for additional information in the training process. Often, these laws measure changes in the input in relation to changes in the output, so we get Ordinary Differential Equations (ODEs) in scientific laws. As it turns out, we can solve an ODE with a neural network.
+md"""Machine learning is all about finding the underlying function that fits a given dataset. This could be an infinite-dimensional problem, but neural networks help to make this a finite problem by finding the weights that make it close enough to the input (Rackauckas). Scientific machine learning incorporates science for additional information in the training process. Often, these scientific laws measure changes in the input in relation to changes in the output, so we get Ordinary Differential Equations (ODEs) such as Hooke's Law. As it turns out, we can solve an ODE with a neural network.
 """
 
 # ╔═╡ a9d22f82-71f0-4b44-b657-d4bdeb4079fe
@@ -143,7 +150,7 @@ md"""**Why neural networks?**
 
 This led us to our next question: why would we use neural networks to solve ODEs when we could just use Julia packages, especially when Julia was created for efficient computing?
 
-There is a phenomenon called the curse of dimensionality: the exponential growth of the number of coefficients needed to build a d-dimensional universal approximator from one-dimensional objects.
+The answer lies in the phenomenon called the curse of dimensionality: the exponential growth of the number of coefficients needed to build a d-dimensional universal approximator from one-dimensional objects.
 Neural networks overcome the curse of dimensionality, and become essential when working in dimensions higher than a certain cutoff (Rackauckas). Some of the more recent neural networks can solve entire families of PDEs, and orders of magnitude faster than traditional PDE solvers (Ananthaswamy). 
 
 """
@@ -152,40 +159,43 @@ Neural networks overcome the curse of dimensionality, and become essential when 
 md"""
 ## Exploring Neural Networks and Chaos
 
-Our final step was to explore how a neural network solves a system of ODEs. We decided to solve the Lorenz system, a well known system of ODEs. We - trained using Hooke's Law
+Our final step was to explore how a neural network solves a system of ODEs. First, as part of the *Computational Thinking* course practice, we trained a neural network using Hooke's Law - an example of scientific machine learning. We then plotted the performance of this neural network against the solution obtained using Julia solvers (specifically the DifferentialEquations.jl package), as seen in the hookes\_law\_writeup.jl file. 
 
-- link GitHub to be able to view NN code
-- include Lorenz equations, we wanted to use a NN to approxmiate the soln to these
-- include picture of attractor - obtained using Julia solvers (include this picture in the repository)
-
+We then decided to solve the Lorenz system, a well known system of ODEs: 
 """
+
+# ╔═╡ aa6f0e7b-534c-44a9-ad01-34e8fb342023
+md"$\begin{align}
+\frac{dx}{dt}&=\sigma(y-x)\\
+\frac{dy}{dt}&=x(\rho-z)-y\\
+\frac{dz}{dt}&= xy-\beta z
+\end{align}$"
+
+# ╔═╡ f739b45c-8d5d-4db8-b47e-710a0caae839
+md"""We first ran some code to define the Lorenz system and obtain the solution (the Lorenz attractor, pictured below) using Julia solvers, as seen in the system\_odes\_test\_writeup.jl file. Then we created a simple neural network consisting of two hidden layers to approximate a solution the Lorenz system, in the lorenz\_NN\_writeup.jl file. Here we used the gradient descent algorithm to update and train the model."""
+
+# ╔═╡ e3e95515-b031-4daa-a726-48a00a0bf44a
+imresize(download("https://www.johndcook.com/lorenz_xy.png") |> load, ratio=0.8)
 
 # ╔═╡ e838543c-2531-4500-b387-4fe18cd7b9b9
 md"""
 ## Future Explorations
-Now that we have learned more about computational thinking, we can continue our explorations into topics such as understanding the best architecture for different neural networks and how to optimize them.
-- we could optimize our current NN
-- what in the NN will give us chaos? (there are other systems that are nonlinear but not chaotic)
-	- cite the papers that are doing chaos
+Now that we have learned more about computational thinking, we can continue our explorations into topics such as understanding the best architecture for different neural networks, and how to optimize them.
 
+One such topic is exploring how exactly a neural network can learn chaos. For example, we used a nonlinear activation function when solving the Lorenz system, but there are still other systems that are nonlinear and not chaotic. In examining the literature on this topic, a 2020 paper published by _IEEE_ titled "Learning Lorenz attractor differential equations using neural network" shows that a neural network is capable of learning the properties of a nonlinear chaotic physical system (Formanek). As this topic is currently being explored, there are sure to be more questions arising out of this research.
 """
 
 
 # ╔═╡ 2366365d-d576-4632-957b-966c9262e9f8
 md"""
 ## Conclusion
-This MIT course aimed to bridge the gap between computer science, mathematics, and their applications. It is important to harness the synergies between different disciplines to tackle complex problems and advance discovery. 
-
-Regardless of the direction of our next exploration, we can to deepen our mathematical intuition and curiosities using a computer. 
-
-- from Chaos by James Gleick: line about bridging gap and discoveries being made at those intersections
-
+Through MIT's _Introduction to Computational Thinking_ course, we explored the connections between computer science, mathematics, and their applications. The Lorenz system above was chosen because chaos was one such concept that highlighted the importance of harnessing the synergies between different disciplines. In his book _Chaos: Making a New Science_, James Gleick discusses the revolution that occurred at a time of highly compartmentalized science: "Chaos breaks across the lines that separate scientific disciplines. Because it is a science of the global nature of systems, it has brought together thinkers from fields that had been widely separated" (5). Additionally, "A twentieth-century fluid dynamicist could hardly expect to advance knowledge in his field without first adopting a body of terminology and mathematical technique. In return, unconsciously, he would give up much freedom to question the foundations of his science" (36). These explorations taught us a new programming language and the technical workings of AI topics such as generative language, but also demonstrated the importance of scientific advancement at these intersections. It is an incredible skill to be able to deepen mathematical intuition and curiosities using a computer, and to be able to explore the foundations of any science.
 """
 
 # ╔═╡ c2cc8afc-cb24-45a4-8dd1-27367abaf638
 md"""**Helper functions** (taken from _Introduction to Computational Thinking_, Module 1, HW 3):
 
-	Note: If viewing this notebook as a pdf, see GitHub for the code
+	Note: If viewing this notebook as a pdf, see GitHub linked at the top for the code.
 """
 
 # ╔═╡ 29bbae5f-c6b2-4503-90f2-88616bb79dca
@@ -408,19 +418,42 @@ if sample_freqs !== missing
 	String([rand_sample_letter(sample_freqs) for _ in 1:400]) |> Quote
 end
 
-# ╔═╡ 43656e9d-387a-438b-a39b-da85f9fbbb55
+# ╔═╡ 2a7aeec3-3ef5-4162-b17a-1ed12741c26d
 md"""
 ## Works Consulted
 
-Rackauckas, Chris. “Introduction to Scientific Machine Learning Through Physics-Informed Neural Networks.” MIT Parallel Computing and Scientific Machine Learning (SciML), 8 Sept. 2020, book.sciml.ai/notes/03-Introduction\_to\_Scientific\_Machine\_Learning\_through\_Physics-Informed\_Neural\_Networks/. 
+Ananthaswamy, Anil. “Latest Neural Nets Solve World’s Hardest Equations Faster than Ever Before.” _Quanta Magazine_, Simons Foundation, 19 Apr. 2021, www.quantamagazine.org/latest-neural-nets-solve-worlds-hardest-equations-faster-than-ever-before-20210419/.
 
-https://www.quantamagazine.org/latest-neural-nets-solve-worlds-hardest-equations-faster-than-ever-before-20210419/
+Baheti, Pragati. “Activation Functions in Neural Networks [12 Types &amp; Use Cases].” _V7_, 27 May 2021, www.v7labs.com/blog/neural-networks-activation-functions. 
 
+Balakrishnan, Harikrishnan Nellippallil, et al. “ChaosNet: A Chaos Based Artificial Neural Network Architecture for Classification.” _Chaos: An Interdisciplinary Journal of Nonlinear Science_, vol. 29, no. 11, Nov. 2019, https://doi.org/10.1063/1.5120831. 
 
+Bompas, S., et al. “Accuracy of Neural Networks for the Simulation of Chaotic Dynamics: Precision of Training Data vs Precision of the Algorithm.” _Chaos: An Interdisciplinary Journal of Nonlinear Science_, vol. 30, 2020, https://doi.org/10.1063/5.0021264. 
+
+De Oliveira, Kenya Andrésia, et al. “Using Artificial Neural Networks to Forecast Chaotic Time Series.” _Physica A: Statistical Mechanics and Its Applications_, vol. 284, no. 1–4, 1 Sept. 2000, pp. 393–404, https://doi.org/https://doi.org/10.1016/S0378-4371(00)00215-6. 
+
+Dufera, Tamirat Temesgen. “Deep Neural Network for System of Ordinary Differential Equations: Vectorized Algorithm and Simulation.” _Machine Learning with Applications_, vol. 5, 15 Sept. 2021, https://doi.org/10.1016/j.mlwa.2021.100058. 
+
+Edelman, Alan, et al. *Introduction to Computational Thinking*, 2022, computationalthinking.mit.edu/Fall22/. 
+
+Formanek, Lukàš and Ondrej Karpiš, "Leaming Lorenz attractor differential equations using neural network," _2020 5th South-East Europe Design Automation, Computer Engineering, Computer Networks and Social Media Conference (SEEDA-CECNSM)_, 2020, pp. 1-4, doi: 10.1109/SEEDA-CECNSM49515.2020.9221785.
+
+Gleick, James. _Chaos: Making a New Science._ Penguin Books, 1988. 
+
+Rackauckas, Chris. “Introduction to Scientific Machine Learning Through Physics-Informed Neural Networks.” _MIT Parallel Computing and Scientific Machine Learning (SciML)_, 8 Sept. 2020, book.sciml.ai/notes/03-Introduction\_to\_Scientific\_Machine\_Learning\_through\_Physics-Informed\_Neural\_Networks/.
+
+Saxena, Pralabh. “Guide to Non-Linear Activation Functions in Deep Learning.” _Medium_, 31 Jan. 2023, heartbeat.comet.ml/guide-to-non-linear-activation-functions-in-deep-learning-6f3725e3a73d. 
+
+Scher, Sebastian, and Gabriele Messori. “Generalization Properties of Neural Networks Trained on Lorenz Systems.” _Nonlinear Processes in Geophysics_, 14 June 2019, https://doi.org/https://doi.org/10.5194/npg-2019-23. 
+
+“The Julia Programming Language.” *JuliaLang.Org*, julialang.org/.
+
+“What Is Gradient Descent?” _IBM Cloud_, www.ibm.com/topics/gradient-descent#:~:text=Gradient%20descent%20is%20an%20optimization,each%20iteration%20of%20parameter%20updates. 
+
+Wolfram, Stephen. "What Is ChatGPT Doing... and Why Does It Work?", _Stephen Wolfram Writings_, writings.stephenwolfram.com/2023/02/what-is-chatgpt-doing-and-why-does-it-work.
+
+Woolley, Jonathan W., et al. “Modeling and Prediction of Chaotic Systems with Artificial Neural Networks.” _International Journal for Numerical Methods in Fluids_, 10 July 2009, https://doi.org/https://doi.org/10.1002/fld.2117. 
 """
-
-# ╔═╡ 86661159-8454-4e68-947b-8a8facd8d58a
-DOI("10.1137/141000671")
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -779,10 +812,10 @@ uuid = "6218d12a-5da1-5696-b52f-db25d2ecc6d1"
 version = "1.2.1"
 
 [[deps.ImageMagick_jll]]
-deps = ["Artifacts", "Ghostscript_jll", "JLLWrappers", "JpegTurbo_jll", "Libdl", "Libtiff_jll", "Pkg", "Zlib_jll", "libpng_jll"]
-git-tree-sha1 = "124626988534986113cfd876e3093e4a03890f58"
+deps = ["Artifacts", "Ghostscript_jll", "JLLWrappers", "JpegTurbo_jll", "Libdl", "Libtiff_jll", "OpenJpeg_jll", "Pkg", "Zlib_jll", "libpng_jll"]
+git-tree-sha1 = "7607ad4100c75908a79ff31fabb792cd37711d70"
 uuid = "c73af94c-d91f-53ed-93a7-00f77d67a9d7"
-version = "6.9.12+3"
+version = "6.9.12+4"
 
 [[deps.ImageMetadata]]
 deps = ["AxisArrays", "ImageAxes", "ImageBase", "ImageCore"]
@@ -981,6 +1014,12 @@ version = "4.4.0+0"
 deps = ["Libdl", "libblastrampoline_jll"]
 uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
+[[deps.LittleCMS_jll]]
+deps = ["Artifacts", "JLLWrappers", "JpegTurbo_jll", "Libdl", "Libtiff_jll", "Pkg"]
+git-tree-sha1 = "110897e7db2d6836be22c18bffd9422218ee6284"
+uuid = "d3a379c0-f9a3-5b72-a4c0-6bf4d2e8af0f"
+version = "2.12.0+0"
+
 [[deps.LogExpFunctions]]
 deps = ["ChainRulesCore", "ChangesOfVariables", "DocStringExtensions", "InverseFunctions", "IrrationalConstants", "LinearAlgebra"]
 git-tree-sha1 = "0a1b7c2863e44523180fdb3146534e265a91870b"
@@ -1113,6 +1152,12 @@ deps = ["Artifacts", "Imath_jll", "JLLWrappers", "Libdl", "Zlib_jll"]
 git-tree-sha1 = "a4ca623df1ae99d09bc9868b008262d0c0ac1e4f"
 uuid = "18a262bb-aa17-5467-a713-aee519bc75cb"
 version = "3.1.4+0"
+
+[[deps.OpenJpeg_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Libtiff_jll", "LittleCMS_jll", "Pkg", "libpng_jll"]
+git-tree-sha1 = "76374b6e7f632c130e78100b166e5a48464256f8"
+uuid = "643b3616-a352-519d-856d-80112ee9badc"
+version = "2.4.0+0"
 
 [[deps.OpenLibm_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -1496,7 +1541,7 @@ version = "17.4.0+0"
 # ╟─f3ea168e-0183-4b95-bc1f-2c0699dee257
 # ╟─b56f19b0-dfe2-11ed-0eb6-9dab1db5e064
 # ╟─3d9dd25a-9de8-47e3-be03-3657b53901e3
-# ╠═d545d006-239c-4de5-adc9-01fac4d8655c
+# ╟─d545d006-239c-4de5-adc9-01fac4d8655c
 # ╠═0cf8abd3-1d2f-4222-a42d-b457a7712d8f
 # ╠═45e5da8b-384b-413a-b1c3-4ad7970ba6f2
 # ╟─93e30d91-32fb-4e6c-bf36-d332e8dcca77
@@ -1509,19 +1554,21 @@ version = "17.4.0+0"
 # ╟─6dba25bf-d225-47e6-b899-33116dcfefe0
 # ╟─0325f414-41b0-452a-9997-ab3829a8bfdf
 # ╠═968583e7-819c-4585-814a-f527c8ed4769
-# ╠═d3a3c945-690a-4a93-911d-eb1f73cbfb2b
-# ╠═741e1af4-e721-45ad-a9e0-901d95bc4711
+# ╟─d3a3c945-690a-4a93-911d-eb1f73cbfb2b
+# ╟─741e1af4-e721-45ad-a9e0-901d95bc4711
+# ╟─e2c6b449-c103-44b8-8cde-2833fc94a090
 # ╟─9803daa1-a491-487a-b763-125d8ea93a3b
-# ╠═17d47572-1a05-4e57-8277-503a8c77bebb
+# ╟─17d47572-1a05-4e57-8277-503a8c77bebb
 # ╟─caa055f4-d810-43df-9582-8aaf0ac3abbd
 # ╟─56c0b955-e34c-4398-a3d3-a904eb6d329c
 # ╠═1f026ead-7676-4f3f-a92c-f966a83eced4
+# ╟─a0d5eb75-7ad0-4325-b19c-9396eccec49f
 # ╟─bdc703ac-7f5f-499c-a32d-f9bf35f0be70
 # ╟─ca195e19-ef70-4cfc-a5f1-797c4f528378
 # ╟─46fa4477-d819-4971-aef1-ffa77141ae8d
 # ╟─83bde9a2-66f8-4524-b7cf-94c168b7a778
 # ╟─98a80d98-db12-4c63-90f1-cd6c8a60ee72
-# ╠═bfc77886-b8d7-4e8e-96be-6f348b144a04
+# ╟─bfc77886-b8d7-4e8e-96be-6f348b144a04
 # ╟─1abe4bba-f36f-4b2d-ae95-41304f8bdc12
 # ╟─b423fd88-e365-4ecc-9610-d1c609586aa1
 # ╟─47dc0051-9ef7-4a94-b8b5-e7b23d506f1b
@@ -1529,6 +1576,9 @@ version = "17.4.0+0"
 # ╟─a9d22f82-71f0-4b44-b657-d4bdeb4079fe
 # ╟─05e4fd4f-983b-4fd0-a58c-14b40a2e811b
 # ╟─215c230e-ccb4-4b4d-907e-069c9d85a9d3
+# ╟─aa6f0e7b-534c-44a9-ad01-34e8fb342023
+# ╟─f739b45c-8d5d-4db8-b47e-710a0caae839
+# ╟─e3e95515-b031-4daa-a726-48a00a0bf44a
 # ╟─e838543c-2531-4500-b387-4fe18cd7b9b9
 # ╟─2366365d-d576-4632-957b-966c9262e9f8
 # ╟─c2cc8afc-cb24-45a4-8dd1-27367abaf638
@@ -1552,7 +1602,6 @@ version = "17.4.0+0"
 # ╟─7f50b840-553a-4d8b-bc41-d993714a171d
 # ╟─af533c6e-fa40-4f67-87a8-7d20388db516
 # ╟─2d0eab72-fe5e-4b7c-847d-75fc32c34ebc
-# ╠═43656e9d-387a-438b-a39b-da85f9fbbb55
-# ╠═86661159-8454-4e68-947b-8a8facd8d58a
+# ╟─2a7aeec3-3ef5-4162-b17a-1ed12741c26d
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
